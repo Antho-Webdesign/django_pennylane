@@ -1,0 +1,28 @@
+{# invoices.html
+   Page pour créer une facture avec plusieurs lignes. Utilise un formset afin
+   de pouvoir ajouter ou supprimer des lignes dynamiquement.
+#}
+{% extends 'manager/base.html' %}
+{% block content %}
+<h2 class="h4 mb-3">Créer une facture</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <h4 class="h6 mt-3">Lignes de facture</h4>
+  {{ formset.management_form }}
+  {% for form_line in formset %}
+    <div class="row g-2 mb-2">
+      <div class="col-md-4">{{ form_line.label }}</div>
+      <div class="col-md-2">{{ form_line.unit_price }}</div>
+      <div class="col-md-2">{{ form_line.quantity }}</div>
+      <div class="col-md-2">{{ form_line.vat_rate }}</div>
+      <div class="col-md-2">{{ form_line.DELETE }}</div>
+    </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary mt-2">Créer la facture</button>
+</form>
+{% if result %}
+  <h3 class="h5 mt-4">Réponse API</h3>
+  <pre class="bg-light p-3 border">{{ result|safe }}</pre>
+{% endif %}
+{% endblock %}
