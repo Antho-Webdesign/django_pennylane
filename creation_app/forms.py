@@ -30,7 +30,7 @@ class CustomerForm(forms.Form):
 class ProductForm(forms.Form):
     label = forms.CharField(label="Nom du produit *", max_length=255)
     unit_price = forms.DecimalField(label="Prix unitaire *", max_digits=12, decimal_places=2)
-    vat_rate = forms.DecimalField(label="TVA (%)", max_digits=5, decimal_places=2, initial=20)
+    vat_rate = forms.CharField(label="TVA (%)", max_length=15, initial="20")
     currency = forms.ChoiceField(
         label="Devise",
         choices=[("EUR", "EUR"), ("USD", "USD"), ("GBP", "GBP")],

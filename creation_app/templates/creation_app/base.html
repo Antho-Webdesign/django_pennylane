@@ -1,31 +1,76 @@
+{% load static %}
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Pennylane - Creation</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pennylane Manager</title>
+
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+  <style>
+    body { background: #f6f7fb; }
+    .app-shell { max-width: 1100px; }
+    .app-card { border: 0; box-shadow: 0 8px 24px rgba(20, 20, 50, .06); border-radius: 16px; }
+    .app-muted { color: #6b7280; }
+    pre.json-box {
+      max-height: 420px; overflow: auto;
+      background: #0b1220; color: #d7e2ff;
+      border-radius: 12px; padding: 14px; border: 1px solid rgba(255,255,255,.08);
+      font-size: .85rem;
+    }
+    .badge-soft { background: rgba(13,110,253,.1); color: #0d6efd; border: 1px solid rgba(13,110,253,.2); }
+    .nav-pillish .nav-link { border-radius: 999px; }
+    .form-text { color: #6b7280; }
+  </style>
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'creation_app:home' %}">Pennylane</a>
-    <div class="navbar-nav">
-      <a class="nav-link" href="{% url 'creation_app:set_token' %}">Token</a>
-      <a class="nav-link" href="{% url 'creation_app:customers' %}">Créer client</a>
-      <a class="nav-link" href="{% url 'creation_app:products' %}">Créer produit</a>
-      <a class="nav-link" href="{% url 'creation_app:invoices' %}">Créer facture</a>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #0d6efd, #4f46e5);">
+  <div class="container app-shell">
+    <a class="navbar-brand fw-semibold" href="{% url 'creation_app:home' %}">
+      Pennylane <span class="badge badge-soft ms-1">POST</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCreation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navCreation">
+      <div class="navbar-nav ms-auto nav-pillish gap-2">
+        <a class="nav-link" href="{% url 'creation_app:set_token' %}">Token</a>
+        <a class="nav-link" href="{% url 'creation_app:customers' %}">Créer client</a>
+        <a class="nav-link" href="{% url 'creation_app:products' %}">Créer produit</a>
+        <a class="nav-link" href="{% url 'creation_app:invoices' %}">Créer facture</a>
+
+        <span class="nav-link disabled">|</span>
+
+        <a class="nav-link" href="{% url 'listing_app:home' %}">Listing (GET)</a>
+      </div>
     </div>
   </div>
 </nav>
 
-<div class="container py-4">
+<main class="container app-shell py-4">
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">{% autoescape off %}{{ message }}{% endautoescape %}</div>
+      <div class="alert alert-{{ message.tags }} app-card py-3 px-4 mb-3">
+        <div class="d-flex align-items-start gap-3">
+          <div class="fw-semibold">Info</div>
+          <div class="flex-grow-1">{% autoescape off %}{{ message }}{% endautoescape %}</div>
+        </div>
+      </div>
     {% endfor %}
   {% endif %}
 
   {% block content %}{% endblock %}
-</div>
+
+  <div class="text-center app-muted small mt-4">
+    Pennylane Manager — Django UI
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

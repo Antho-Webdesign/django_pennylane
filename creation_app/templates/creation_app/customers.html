@@ -1,15 +1,50 @@
 {% extends "creation_app/base.html" %}
-{% block content %}
-  <h2 class="h5 mb-3">Créer un client</h2>
 
-  <form method="post" class="card card-body">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary">Créer</button>
-  </form>
+{% block content %}
+  <div class="app-card p-4 mb-3">
+    <h1 class="h5 mb-1">Créer un client</h1>
+    <div class="app-muted small">POST → <code>/company_customers</code></div>
+  </div>
+
+  <div class="app-card p-4 mb-3">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3">
+        {% for field in form %}
+          <div class="col-md-6">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-primary">Créer</button>
+        <a class="btn btn-outline-secondary" href="{% url 'creation_app:set_token' %}">Modifier le token</a>
+      </div>
+    </form>
+  </div>
 
   {% if result %}
-    <h3 class="h6 mt-4">Réponse API</h3>
-    <pre class="bg-white border p-3">{{ result|safe }}</pre>
+    <div class="app-card p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-semibold">Succès</div>
+          <div class="app-muted small">
+            ID: <code>{{ result.id }}</code>
+          </div>
+        </div>
+        <span class="badge text-bg-success">OK</span>
+      </div>
+
+      <div class="mt-3">
+        <pre class="json-box">{{ result|safe }}</pre>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}

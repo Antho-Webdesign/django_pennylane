@@ -46,4 +46,17 @@ def list_entities(entity_type: str, q: str = "", token: str | None = None) -> di
     return _handle_response(resp)
 
 def list_customers(token: str | None = None) -> dict:
-    return list_entities("company_customers", token=token)
+    # on recupere url = "https://app.pennylane.com/api/external/v2/customers?sort=-id"
+    url = f"{settings.PENNYLANE_API_BASE_URL}/customers?sort=-id"
+    resp = requests.get(url, headers=_get_headers(token), timeout=20)
+    return _handle_response(resp)
+
+def list_products(token: str | None = None) -> dict:
+    url = f"{settings.PENNYLANE_API_BASE_URL}/products?sort=-id"
+    resp = requests.get(url, headers=_get_headers(token), timeout=20)
+    return _handle_response(resp)
+
+def list_customer_invoices(token: str | None = None) -> dict:
+    url = f"{settings.PENNYLANE_API_BASE_URL}/customer_invoices?sort=-id"
+    resp = requests.get(url, headers=_get_headers(token), timeout=20)
+    return _handle_response(resp)
