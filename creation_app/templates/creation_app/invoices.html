@@ -1,0 +1,31 @@
+{% extends "creation_app/base.html" %}
+{% block content %}
+  <h2 class="h5 mb-3">Créer une facture</h2>
+
+  <form method="post" class="card card-body">
+    {% csrf_token %}
+
+    <h3 class="h6">En-tête</h3>
+    {{ header_form.as_p }}
+
+    <h3 class="h6 mt-3">Lignes</h3>
+    {{ line_formset.management_form }}
+
+    {% for form in line_formset %}
+      <div class="border rounded p-3 mb-2 bg-light">
+        {{ form.as_p }}
+      </div>
+    {% endfor %}
+
+    <button class="btn btn-primary">Créer</button>
+    <p class="text-muted mt-2 mb-0">
+      (Astuce : pour ajouter/supprimer des lignes dynamiquement, on ajoutera du JS plus tard.
+      Là, on reste simple.)
+    </p>
+  </form>
+
+  {% if result %}
+    <h3 class="h6 mt-4">Réponse API</h3>
+    <pre class="bg-white border p-3">{{ result|safe }}</pre>
+  {% endif %}
+{% endblock %}

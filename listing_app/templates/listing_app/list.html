@@ -1,0 +1,16 @@
+{% extends "listing_app/base.html" %}
+{% block content %}
+  <h2 class="h5 mb-3">{{ title }}</h2>
+
+  <form method="get" class="card card-body mb-3">
+    {{ form.as_p }}
+    <button class="btn btn-dark">Filtrer</button>
+  </form>
+
+  {% if result %}
+    <h3 class="h6">Réponse API</h3>
+    <pre class="bg-white border p-3">{{ result|safe }}</pre>
+  {% else %}
+    <p class="text-muted">Aucun résultat à afficher (ou erreur).</p>
+  {% endif %}
+{% endblock %}

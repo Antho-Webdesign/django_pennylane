@@ -21,6 +21,7 @@ PENNYLANE_API_BASE_URL = os.getenv('API_BASE_URL', 'https://app.pennylane.com/ap
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES_DIRS = BASE_DIR / 'templates'
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'manager',
+    'creation_app',
+    'listing_app',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +64,7 @@ ROOT_URLCONF = 'pennylane_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIRS],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

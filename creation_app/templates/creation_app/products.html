@@ -1,0 +1,15 @@
+{% extends "creation_app/base.html" %}
+{% block content %}
+  <h2 class="h5 mb-3">Créer un produit</h2>
+
+  <form method="post" class="card card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary">Créer</button>
+  </form>
+
+  {% if result %}
+    <h3 class="h6 mt-4">Réponse API</h3>
+    <pre class="bg-white border p-3">{{ result|safe }}</pre>
+  {% endif %}
+{% endblock %}

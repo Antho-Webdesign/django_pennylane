@@ -1,0 +1,49 @@
+"""
+Couche service GET pour Pennylane.
+On réutilise le token en session si présent, sinon fallback settings.PENNYLANE_API_TOKEN.
+"""
+
+from __future__ import annotations
+import requests
+from django.conf import settings
+
+
+def _get_headers(token: str | None) -> dict[str, str]:
+    headers = {"Content-Type": "application/json"}
+    auth_token = token or getattr(settings, "PENNYLANE_API_TOKEN", "")
+    if auth_token:
+        headers["Authorization"] = f"Bearer {auth_token}"
+    return headers
+
+
+def _handle_response(resp: requests.Response) -> dict:
+    try:
+        data = resp.json()
+    except Exception:
+        data = {"raw": resp.text}
+
+    if resp.ok:
+        return data
+
+    message = data.get("message") if isinstance(data, dict) else None
+    raise RuntimeError(f"Pennylane HTTP {resp.status_code}: {message or resp.text}")
+
+
+def list_entities(entity_type: str, q: str = "", token: str | None = None) -> dict:
+    """
+    Liste une ressource Pennylane.
+    - entity_type: company_customers, products, customer_invoices, supplier_invoices
+    - q: filtre optionnel 'name contains' via filter=...
+    """
+    endpoint = f"/{entity_type}"
+    if q:
+        endpoint += (
+            f"?filter=[{{\"field\":\"name\",\"operator\":\"contains\",\"value\":\"{q}\"}}]"
+        )
+
+    url = f"{settings.PENNYLANE_API_BASE_URL}{endpoint}"
+    resp = requests.get(url, headers=_get_headers(token), timeout=20)
+    return _handle_response(resp)
+
+def list_customers(token: str | None = None) -> dict:
+    return list_entities("company_customers", token=token)

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Pennylane - Creation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'creation_app:home' %}">Pennylane</a>
+    <div class="navbar-nav">
+      <a class="nav-link" href="{% url 'creation_app:set_token' %}">Token</a>
+      <a class="nav-link" href="{% url 'creation_app:customers' %}">Créer client</a>
+      <a class="nav-link" href="{% url 'creation_app:products' %}">Créer produit</a>
+      <a class="nav-link" href="{% url 'creation_app:invoices' %}">Créer facture</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{% autoescape off %}{{ message }}{% endautoescape %}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>
