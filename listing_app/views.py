@@ -7,7 +7,11 @@ from django.shortcuts import render
 from django.contrib import messages
 
 from .forms import NameFilterForm
-from .services import list_entities
+from .services import (
+    list_entities,
+    get_trial_balance,
+    get_ledger_accounts,
+)
 
 
 def _get_session_token(request) -> str | None:
@@ -44,6 +48,26 @@ def _generic_list(request, entity_type: str, title: str):
     )
 
 
+def _generic_detail(request, fetcher, *, title: str, entity_type: str):
+    token = _get_session_token(request)
+
+    try:
+        result = fetcher(token=token)
+    except Exception as e:
+        messages.error(request, f"Erreur: {e}")
+        result = None
+
+    return render(
+        request,
+        "listing_app/detail.html",
+        {
+            "title": title,
+            "result": result,
+            "entity_type": entity_type,
+        },
+    )
+
+
 def list_customers(request):
     return _generic_list(request, "company_customers", "Liste des clients")
 
@@ -58,3 +82,21 @@ def list_customer_invoices(request):
 
 def list_supplier_invoices(request):
     return _generic_list(request, "supplier_invoices", "Liste des factures fournisseurs")
+
+
+def trial_balance(request):
+    return _generic_detail(
+        request,
+        get_trial_balance,
+        title="Balance générale (trial_balance)",
+        entity_type="trial_balance",
+    )
+
+
+def ledger_accounts(request):
+    return _generic_detail(
+        request,
+        get_ledger_accounts,
+        title="Comptes comptables (ledger_accounts)",
+        entity_type="ledger_accounts",
+    )
