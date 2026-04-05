@@ -14,4 +14,6 @@ urlpatterns = [
     path("products/", views.list_products, name="products"),
     path("customer-invoices/", views.list_customer_invoices, name="customer_invoices"),
     path("supplier-invoices/", views.list_supplier_invoices, name="supplier_invoices"),
+    path("trial-balance/", views.trial_balance, name="trial_balance"),
+    path("ledger-accounts/", views.ledger_accounts, name="ledger_accounts"),
 ]

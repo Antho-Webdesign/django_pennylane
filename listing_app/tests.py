@@ -11,6 +11,7 @@ class ListingServicesTests(SimpleTestCase):
         headers = services._get_headers("session-token")
 
         self.assertEqual(headers["Authorization"], "Bearer session-token")
+        self.assertEqual(headers["Accept"], "application/json")
 
     @override_settings(PENNYLANE_API_TOKEN="fallback-token")
     def test_get_headers_falls_back_to_settings_token(self):
@@ -48,7 +49,53 @@ class ListingServicesTests(SimpleTestCase):
 
         mock_get.assert_called_once_with(
             "https://api.example.test/customers",
-            headers={"Content-Type": "application/json", "Authorization": "Bearer tkn"},
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
             params={"sort": "-id"},
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.get")
+    def test_trial_balance_includes_2026_flag(self, mock_get):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"trial_balance": []}
+        mock_get.return_value = mock_response
+
+        services.get_trial_balance(token="tkn")
+
+        mock_get.assert_called_once_with(
+            "https://api.example.test/trial_balance",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params={"use_2026_api_changes": "true"},
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.get")
+    def test_ledger_accounts_includes_2026_flag(self, mock_get):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"ledger_accounts": []}
+        mock_get.return_value = mock_response
+
+        services.get_ledger_accounts(token="tkn")
+
+        mock_get.assert_called_once_with(
+            "https://api.example.test/ledger_accounts",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params={"use_2026_api_changes": "true"},
             timeout=services.REQUEST_TIMEOUT_SECONDS,
         )

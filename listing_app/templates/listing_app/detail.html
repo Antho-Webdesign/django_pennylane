@@ -1,0 +1,18 @@
+{% extends "listing_app/base.html" %}
+{% load pennylane_extras %}
+
+{% block content %}
+  <div class="app-card p-4 mb-3">
+    <h1 class="h5 mb-1">{{ title }}</h1>
+    <div class="app-muted small">Ressource: <code>{{ entity_type }}</code></div>
+  </div>
+
+  <div class="app-card p-4">
+    <div class="fw-semibold mb-2">JSON brut</div>
+    {% if result %}
+      <pre class="json-box">{{ result|pretty_json }}</pre>
+    {% else %}
+      <div class="app-muted">Aucune donnée reçue (vérifiez le token ou l'API).</div>
+    {% endif %}
+  </div>
+{% endblock %}
