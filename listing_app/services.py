@@ -4,8 +4,13 @@ On réutilise le token en session si présent, sinon fallback settings.PENNYLANE
 """
 
 from __future__ import annotations
+
+import json
+
 import requests
 from django.conf import settings
+
+REQUEST_TIMEOUT_SECONDS = 20
 
 
 def _get_headers(token: str | None) -> dict[str, str]:
@@ -29,34 +34,42 @@ def _handle_response(resp: requests.Response) -> dict:
     raise RuntimeError(f"Pennylane HTTP {resp.status_code}: {message or resp.text}")
 
 
+def _get(endpoint: str, *, token: str | None = None, params: dict[str, str] | None = None) -> dict:
+    url = f"{settings.PENNYLANE_API_BASE_URL}{endpoint}"
+    resp = requests.get(
+        url,
+        headers=_get_headers(token),
+        params=params,
+        timeout=REQUEST_TIMEOUT_SECONDS,
+    )
+    return _handle_response(resp)
+
+
 def list_entities(entity_type: str, q: str = "", token: str | None = None) -> dict:
     """
     Liste une ressource Pennylane.
     - entity_type: company_customers, products, customer_invoices, supplier_invoices
     - q: filtre optionnel 'name contains' via filter=...
     """
-    endpoint = f"/{entity_type}"
+    params = None
     if q:
-        endpoint += (
-            f"?filter=[{{\"field\":\"name\",\"operator\":\"contains\",\"value\":\"{q}\"}}]"
-        )
+        params = {
+            "filter": json.dumps(
+                [{"field": "name", "operator": "contains", "value": q}],
+                separators=(",", ":"),
+            )
+        }
 
-    url = f"{settings.PENNYLANE_API_BASE_URL}{endpoint}"
-    resp = requests.get(url, headers=_get_headers(token), timeout=20)
-    return _handle_response(resp)
+    return _get(f"/{entity_type}", token=token, params=params)
+
 
 def list_customers(token: str | None = None) -> dict:
-    # on recupere url = "https://app.pennylane.com/api/external/v2/customers?sort=-id"
-    url = f"{settings.PENNYLANE_API_BASE_URL}/customers?sort=-id"
-    resp = requests.get(url, headers=_get_headers(token), timeout=20)
-    return _handle_response(resp)
+    return _get("/customers", token=token, params={"sort": "-id"})
+
 
 def list_products(token: str | None = None) -> dict:
-    url = f"{settings.PENNYLANE_API_BASE_URL}/products?sort=-id"
-    resp = requests.get(url, headers=_get_headers(token), timeout=20)
-    return _handle_response(resp)
+    return _get("/products", token=token, params={"sort": "-id"})
+
 
 def list_customer_invoices(token: str | None = None) -> dict:
-    url = f"{settings.PENNYLANE_API_BASE_URL}/customer_invoices?sort=-id"
-    resp = requests.get(url, headers=_get_headers(token), timeout=20)
-    return _handle_response(resp)
+    return _get("/customer_invoices", token=token, params={"sort": "-id"})
