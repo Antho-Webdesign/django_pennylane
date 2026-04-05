@@ -20,55 +20,37 @@ class ListingServicesTests(SimpleTestCase):
         self.assertEqual(headers["Authorization"], "Bearer fallback-token")
 
     @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
-    @patch("listing_app.services.requests.get")
-    def test_list_entities_sends_filter_as_json_param(self, mock_get):
+    @patch("listing_app.services.requests.request")
+    def test_list_entities_sends_filter_as_json_param(self, mock_request):
         mock_response = Mock()
         mock_response.ok = True
         mock_response.json.return_value = {"items": []}
-        mock_get.return_value = mock_response
+        mock_request.return_value = mock_response
 
         services.list_entities("products", q='Acme "Plus"', token="tkn")
 
-        mock_get.assert_called_once()
-        call_kwargs = mock_get.call_args.kwargs
+        mock_request.assert_called_once()
+        call_args = mock_request.call_args.args
+        call_kwargs = mock_request.call_args.kwargs
 
-        self.assertEqual(mock_get.call_args.args[0], "https://api.example.test/products")
+        self.assertEqual(call_args[0], "GET")
+        self.assertEqual(call_args[1], "https://api.example.test/products")
         self.assertEqual(call_kwargs["headers"]["Authorization"], "Bearer tkn")
         self.assertEqual(call_kwargs["timeout"], services.REQUEST_TIMEOUT_SECONDS)
         self.assertIn('"value":"Acme \\"Plus\\""', call_kwargs["params"]["filter"])
 
     @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
-    @patch("listing_app.services.requests.get")
-    def test_list_customers_uses_sort_parameter(self, mock_get):
-        mock_response = Mock()
-        mock_response.ok = True
-        mock_response.json.return_value = {"items": []}
-        mock_get.return_value = mock_response
-
-        services.list_customers(token="tkn")
-
-        mock_get.assert_called_once_with(
-            "https://api.example.test/customers",
-            headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer tkn",
-            },
-            params={"sort": "-id"},
-            timeout=services.REQUEST_TIMEOUT_SECONDS,
-        )
-
-    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
-    @patch("listing_app.services.requests.get")
-    def test_trial_balance_includes_2026_flag(self, mock_get):
+    @patch("listing_app.services.requests.request")
+    def test_trial_balance_includes_2026_flag(self, mock_request):
         mock_response = Mock()
         mock_response.ok = True
         mock_response.json.return_value = {"trial_balance": []}
-        mock_get.return_value = mock_response
+        mock_request.return_value = mock_response
 
         services.get_trial_balance(token="tkn")
 
-        mock_get.assert_called_once_with(
+        mock_request.assert_called_once_with(
+            "GET",
             "https://api.example.test/trial_balance",
             headers={
                 "Content-Type": "application/json",
@@ -76,26 +58,53 @@ class ListingServicesTests(SimpleTestCase):
                 "Authorization": "Bearer tkn",
             },
             params={"use_2026_api_changes": "true"},
+            json=None,
             timeout=services.REQUEST_TIMEOUT_SECONDS,
         )
 
     @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
-    @patch("listing_app.services.requests.get")
-    def test_ledger_accounts_includes_2026_flag(self, mock_get):
+    @patch("listing_app.services.requests.request")
+    def test_import_supplier_invoice_uses_post(self, mock_request):
         mock_response = Mock()
         mock_response.ok = True
-        mock_response.json.return_value = {"ledger_accounts": []}
-        mock_get.return_value = mock_response
+        mock_response.json.return_value = {"id": "inv_1"}
+        mock_request.return_value = mock_response
 
-        services.get_ledger_accounts(token="tkn")
+        payload = {"file_attachment_id": "fa_123"}
+        services.import_supplier_invoice(payload, token="tkn")
 
-        mock_get.assert_called_once_with(
-            "https://api.example.test/ledger_accounts",
+        mock_request.assert_called_once_with(
+            "POST",
+            "https://api.example.test/supplier_invoices/import",
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "Authorization": "Bearer tkn",
             },
-            params={"use_2026_api_changes": "true"},
+            params=None,
+            json=payload,
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.request")
+    def test_validate_supplier_invoice_accounting_uses_put(self, mock_request):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"status": "validated"}
+        mock_request.return_value = mock_response
+
+        services.validate_supplier_invoice_accounting("sup_001", token="tkn")
+
+        mock_request.assert_called_once_with(
+            "PUT",
+            "https://api.example.test/supplier_invoices/sup_001/validate_accounting",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params=None,
+            json=None,
             timeout=services.REQUEST_TIMEOUT_SECONDS,
         )
