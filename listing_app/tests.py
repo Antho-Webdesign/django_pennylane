@@ -108,3 +108,42 @@ class ListingServicesTests(SimpleTestCase):
             json=None,
             timeout=services.REQUEST_TIMEOUT_SECONDS,
         )
+
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.request")
+    def test_create_company_customer_uses_post_company_customers(self, mock_request):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"id": 273630121, "name": "My company"}
+        mock_request.return_value = mock_response
+
+        payload = {
+            "ledger_account": {"number": "411100344"},
+            "billing_address": {
+                "address": "8 rue de la paix",
+                "country_alpha2": "FR",
+                "postal_code": "75002",
+                "city": "Paris",
+            },
+            "payment_conditions": "30_days",
+            "vat_number": "FR12345678901",
+            "name": "My company",
+            "phone": "+33612345678",
+            "reg_no": "123456789",
+        }
+
+        services.create_company_customer(payload, token="tkn")
+
+        mock_request.assert_called_once_with(
+            "POST",
+            "https://api.example.test/company_customers",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params=None,
+            json=payload,
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )

@@ -175,6 +175,14 @@ def retrieve_customer_invoice(invoice_id: str, token: str | None = None) -> dict
     return _get(f"/customer_invoices/{invoice_id}", token=token)
 
 
+def create_company_customer(payload: dict[str, Any], token: str | None = None) -> dict:
+    """
+    Crée un client société via /company_customers.
+    Le payload suit le format Pennylane (ledger_account, billing_address, etc.).
+    """
+    return _request("POST", "/company_customers", token=token, payload=payload)
+
+
 # ----------------------------
 # E-invoices / file attachments / mandates / quotes
 # ----------------------------
