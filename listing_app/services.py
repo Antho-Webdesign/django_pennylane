@@ -103,16 +103,32 @@ def list_journals(token: str | None = None) -> dict:
     return _get("/journals", token=token)
 
 
+def create_journal(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/journals", token=token, payload=payload)
+
+
 def list_ledger_attachments(token: str | None = None) -> dict:
     return _get("/ledger_attachments", token=token)
+
+
+def create_ledger_attachment(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/ledger_attachments", token=token, payload=payload)
 
 
 def list_ledger_entries(token: str | None = None) -> dict:
     return _get("/ledger_entries", token=token)
 
 
+def create_ledger_entry(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/ledger_entries", token=token, payload=payload)
+
+
 def list_ledger_entry_lines(token: str | None = None) -> dict:
     return _get("/ledger_entry_lines", token=token)
+
+
+def create_ledger_entry_line(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/ledger_entry_lines", token=token, payload=payload)
 
 
 def list_fiscal_years(token: str | None = None) -> dict:
@@ -123,8 +139,16 @@ def list_accounting_exports(token: str | None = None) -> dict:
     return _get("/accounting_exports", token=token)
 
 
+def create_accounting_export(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/accounting_exports", token=token, payload=payload)
+
+
 def list_exports(token: str | None = None) -> dict:
     return _get("/exports", token=token)
+
+
+def create_export(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/exports", token=token, payload=payload)
 
 
 # ----------------------------
@@ -135,8 +159,16 @@ def list_category_groups(token: str | None = None) -> dict:
     return _get("/category_groups", token=token)
 
 
+def create_category_group(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/category_groups", token=token, payload=payload)
+
+
 def list_categories(token: str | None = None) -> dict:
     return _get("/categories", token=token)
+
+
+def create_category(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/categories", token=token, payload=payload)
 
 
 # ----------------------------
@@ -145,6 +177,10 @@ def list_categories(token: str | None = None) -> dict:
 
 def list_billing_subscriptions(token: str | None = None) -> dict:
     return _get("/billing_subscriptions", token=token)
+
+
+def create_billing_subscription(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/billing_subscriptions", token=token, payload=payload)
 
 
 # ----------------------------
@@ -163,6 +199,10 @@ def list_commercial_documents(token: str | None = None) -> dict:
     return _get("/commercial_documents", token=token)
 
 
+def create_commercial_document(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/commercial_documents", token=token, payload=payload)
+
+
 # ----------------------------
 # Customer invoices + related
 # ----------------------------
@@ -171,8 +211,44 @@ def list_customer_invoice_templates(token: str | None = None) -> dict:
     return _get("/customer_invoice_templates", token=token)
 
 
+def create_customer_invoice_template(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/customer_invoice_templates", token=token, payload=payload)
+
+
+def list_customer_invoices_all(token: str | None = None) -> dict:
+    return _get("/customer_invoices", token=token)
+
+
 def retrieve_customer_invoice(invoice_id: str, token: str | None = None) -> dict:
     return _get(f"/customer_invoices/{invoice_id}", token=token)
+
+
+def create_customer_invoice(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/customer_invoices", token=token, payload=payload)
+
+
+def list_customers_all(token: str | None = None) -> dict:
+    return _get("/customers", token=token)
+
+
+def retrieve_customer(customer_id: str, token: str | None = None) -> dict:
+    return _get(f"/customers/{customer_id}", token=token)
+
+
+def retrieve_company_customer(customer_id: str, token: str | None = None) -> dict:
+    return _get(f"/company_customers/{customer_id}", token=token)
+
+
+def retrieve_individual_customer(customer_id: str, token: str | None = None) -> dict:
+    return _get(f"/individual_customers/{customer_id}", token=token)
+
+
+def list_customer_contacts(customer_id: str, token: str | None = None) -> dict:
+    return _get(f"/customers/{customer_id}/contacts", token=token)
+
+
+def list_customer_categories(customer_id: str, token: str | None = None) -> dict:
+    return _get(f"/customers/{customer_id}/categories", token=token)
 
 
 def create_company_customer(payload: dict[str, Any], token: str | None = None) -> dict:
@@ -183,6 +259,10 @@ def create_company_customer(payload: dict[str, Any], token: str | None = None) -
     return _request("POST", "/company_customers", token=token, payload=payload)
 
 
+def create_individual_customer(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/individual_customers", token=token, payload=payload)
+
+
 # ----------------------------
 # E-invoices / file attachments / mandates / quotes
 # ----------------------------
@@ -191,16 +271,32 @@ def list_e_invoices(token: str | None = None) -> dict:
     return _get("/e_invoices", token=token)
 
 
+def create_e_invoice(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/e_invoices", token=token, payload=payload)
+
+
 def list_file_attachments(token: str | None = None) -> dict:
     return _get("/file_attachments", token=token)
+
+
+def create_file_attachment(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/file_attachments", token=token, payload=payload)
 
 
 def list_mandates(token: str | None = None) -> dict:
     return _get("/mandates", token=token)
 
 
+def create_mandate(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/mandates", token=token, payload=payload)
+
+
 def list_quotes(token: str | None = None) -> dict:
     return _get("/quotes", token=token)
+
+
+def create_quote(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/quotes", token=token, payload=payload)
 
 
 def retrieve_quote(quote_id: str, token: str | None = None) -> dict:
@@ -213,6 +309,10 @@ def retrieve_quote(quote_id: str, token: str | None = None) -> dict:
 
 def list_supplier_invoices(token: str | None = None) -> dict:
     return _get("/supplier_invoices", token=token)
+
+
+def create_supplier_invoice(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/supplier_invoices", token=token, payload=payload)
 
 
 def retrieve_supplier_invoice(invoice_id: str, token: str | None = None) -> dict:
@@ -302,8 +402,16 @@ def list_purchase_requests(token: str | None = None) -> dict:
     return _get("/purchase_requests", token=token)
 
 
+def create_purchase_request(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/purchase_requests", token=token, payload=payload)
+
+
 def list_suppliers(token: str | None = None) -> dict:
     return _get("/suppliers", token=token)
+
+
+def create_supplier(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/suppliers", token=token, payload=payload)
 
 
 # ----------------------------
@@ -314,8 +422,16 @@ def list_bank_accounts(token: str | None = None) -> dict:
     return _get("/bank_accounts", token=token)
 
 
+def create_bank_account(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/bank_accounts", token=token, payload=payload)
+
+
 def list_transactions(token: str | None = None) -> dict:
     return _get("/transactions", token=token)
+
+
+def create_transaction(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/transactions", token=token, payload=payload)
 
 
 # ----------------------------
@@ -324,3 +440,7 @@ def list_transactions(token: str | None = None) -> dict:
 
 def list_users(token: str | None = None) -> dict:
     return _get("/users", token=token)
+
+
+def create_user(payload: dict[str, Any], token: str | None = None) -> dict:
+    return _request("POST", "/users", token=token, payload=payload)

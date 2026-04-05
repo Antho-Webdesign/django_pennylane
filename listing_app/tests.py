@@ -147,3 +147,51 @@ class ListingServicesTests(SimpleTestCase):
             json=payload,
             timeout=services.REQUEST_TIMEOUT_SECONDS,
         )
+
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.request")
+    def test_retrieve_company_customer_uses_get(self, mock_request):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"id": "cust_001"}
+        mock_request.return_value = mock_response
+
+        services.retrieve_company_customer("cust_001", token="tkn")
+
+        mock_request.assert_called_once_with(
+            "GET",
+            "https://api.example.test/company_customers/cust_001",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params=None,
+            json=None,
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )
+
+    @override_settings(PENNYLANE_API_BASE_URL="https://api.example.test")
+    @patch("listing_app.services.requests.request")
+    def test_create_quote_uses_post(self, mock_request):
+        mock_response = Mock()
+        mock_response.ok = True
+        mock_response.json.return_value = {"id": "q_001"}
+        mock_request.return_value = mock_response
+
+        payload = {"customer_id": "cust_001", "label": "Devis Avril"}
+        services.create_quote(payload, token="tkn")
+
+        mock_request.assert_called_once_with(
+            "POST",
+            "https://api.example.test/quotes",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer tkn",
+            },
+            params=None,
+            json=payload,
+            timeout=services.REQUEST_TIMEOUT_SECONDS,
+        )
